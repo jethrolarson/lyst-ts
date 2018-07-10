@@ -1,0 +1,50 @@
+{
+  "author": {
+    "name": "Jethro Larson",
+    "email": "jethrolarson@gmail.com",
+    "url": "http://www.jethrolarson.com/"
+  },
+  "description": "Functional Immutable List in TypeScript",
+  "devDependencies": {
+    "@types/jest": "^23.1.5",
+    "git-validate": "^2.2.2",
+    "jest": "^23.4.0",
+    "prettier": "^1.13.4",
+    "prettier-tslint": "^0.4.0",
+    "ts-jest": "^23.0.0",
+    "tslint": "^5.10.0",
+    "tslint-config-prettier": "^1.12.0",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "~2.9.2"
+  },
+  "directories": {},
+  "keywords": [
+    "functional",
+    "list",
+    "immutable",
+    "typescript"
+  ],
+  "license": "MIT",
+  "name": "lyst",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "main": "dist/lyst.js",
+  "types": "dist/lyst.d.ts",
+  "scripts": {
+    "build": "./node_modules/typescript/bin/tsc -p ./tsconfig.publish.json",
+    "lint": "./node_modules/.bin/prettier-tslint check 'src/**/*.ts'",
+    "fixlint": "./node_modules/.bin/prettier-tslint fix 'src/**/*.ts'",
+    "test": "./node_modules/.bin/jest --watch",
+    "check": "./node_modules/.bin/jest",
+    "coverage": "open ./coverage/index.html",
+    "prepublish": "node scripts/install.js && npm run build && npm run build"
+  },
+  "pre-push": [
+    "lint",
+    "check"
+  ],
+  "version": "4.0.6"
+}

@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "strict": true,
+        "sourceMap": true,
+        "allowUnreachableCode": false,
+        "noImplicitReturns": true,
+        "allowUnusedLabels": false,
+        "skipLibCheck": true,
+        "allowSyntheticDefaultImports": true,
+        "lib": [
+            "es2018"
+        ],
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
