@@ -3,4 +3,4 @@ Lyst
 
 Type-safe Immutable list for Typescript and JavaScript
 
-[DOCS](docs/index.html)
+[DOCS](http://www.jethrolarson.com/lyst/docs/index.html)

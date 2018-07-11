@@ -22,7 +22,7 @@ export interface NonEmptyList<T> {
 }
 
 /**
- * The list type you're probably looking for
+ * The list type
  */
 export type Lyst<T> = NonEmptyList<T> | Empty;
 

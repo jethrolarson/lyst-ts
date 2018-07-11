@@ -43,7 +43,7 @@
     "check": "./node_modules/.bin/jest",
     "coverage": "open ./coverage/index.html",
     "prepublish": "node scripts/install.js && npm run build && npm run docs",
-    "docs": "./node_modules/.bin/typedoc --out ./docs"
+    "docs": "./node_modules/.bin/typedoc --out ./docs src/lyst.ts"
   },
   "pre-push": [
     "lint",
