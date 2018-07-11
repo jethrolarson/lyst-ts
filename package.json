@@ -12,9 +12,11 @@
     "prettier": "^1.13.4",
     "prettier-tslint": "^0.4.0",
     "ts-jest": "^23.0.0",
+    "ts-jsdoc": "^3.0.1",
     "tslint": "^5.10.0",
     "tslint-config-prettier": "^1.12.0",
     "tslint-config-standard": "^7.0.0",
+    "typedoc": "^0.11.1",
     "typescript": "~2.9.2"
   },
   "directories": {},
@@ -40,7 +42,8 @@
     "test": "./node_modules/.bin/jest --watch",
     "check": "./node_modules/.bin/jest",
     "coverage": "open ./coverage/index.html",
-    "prepublish": "node scripts/install.js && npm run build && npm run build"
+    "prepublish": "node scripts/install.js && npm run build && npm run docs",
+    "docs": "./node_modules/.bin/typedoc --out ./docs"
   },
   "pre-push": [
     "lint",
