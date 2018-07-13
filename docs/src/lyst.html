@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>lyst.ts</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="../style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          
+          <h1 id="lyst-ts">lyst.ts</h1>
+<p>Type-safe Immutable list for Typescript and JavaScript</p>
+
+          
+        
+
+        
+      </div>
+
+      
+        
+        <h2 id="exported-types">Exported Types</h2>
+<h3 id="emptylyst">EmptyLyst</h3>
+<p>Lyst with no values</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> EmptyLyst = {
+  readonly tag: <span class="hljs-string">"EmptyLyst"</span>;
+  readonly length: <span class="hljs-number">0</span>;
+};</pre></div>
+        
+      
+        
+        <h3 id="nonemptylyst">NonEmptyLyst</h3>
+<p>Lyst that has at least one value.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> NonEmptyLyst&lt;T&gt; = {
+  readonly tag: <span class="hljs-string">"Lyst"</span>;
+  readonly val: T;
+  readonly next: Lyst&lt;T&gt;;
+  readonly length: <span class="hljs-built_in">number</span>;
+};</pre></div>
+        
+      
+        
+        <h3 id="lyst">Lyst</h3>
+<p>The real Lyst type</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> Lyst&lt;T&gt; = NonEmptyLyst&lt;T&gt; | EmptyLyst;</pre></div>
+        
+      
+        
+        <h2 id="creating">Creating</h2>
+
+        
+      
+        
+        <h3 id="lyst">Lyst</h3>
+<p>Create a list from a value</p>
+<ul>
+<li><code>val</code> - value to store in the node</li>
+<li><code>next</code>  - next node in list. To terminate the list pass <code>empty</code></li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Lyst = &lt;T&gt;(val: T, next: Lyst&lt;T&gt;): NonEmptyLyst&lt;T&gt; =&gt; ({
+  tag: <span class="hljs-string">"Lyst"</span>,
+  val,
+  next,
+  length: next.length + <span class="hljs-number">1</span>
+});</pre></div>
+        
+      
+        
+        <h3 id="empty">empty</h3>
+<p>The empty list value. Since Lysts are immutable you never have to create a new empty list.
+Use this rather than creating your own.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> empty: EmptyLyst = { tag: <span class="hljs-string">"EmptyLyst"</span>, length: <span class="hljs-number">0</span> };</pre></div>
+        
+      
+        
+        <h2 id="functions">Functions</h2>
+
+        
+      
+        
+        <h3 id="isempty">isEmpty</h3>
+<p>Test if a list is empty. All lists contain the empty list as the last element.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isEmpty = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt;</span> xs === empty;</pre></div>
+        
+      
+        
+        <h3 id="lystof">LystOf</h3>
+<p>Create a list with a single value</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> LystOf = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">x: T</span>) =&gt;</span> Lyst(x, empty);</pre></div>
+        
+      
+        
+        <p>Internal helper to flip arguments of a binary function.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">const</span> flip = &lt;T, U, V&gt;<span class="hljs-function">(<span class="hljs-params">f: (<span class="hljs-params">x: T, y: U</span>) =&gt; V</span>) =&gt;</span> (y2: U, x2: T): <span class="hljs-function"><span class="hljs-params">V</span> =&gt;</span> f(x2, y2);</pre></div>
+        
+      
+        
+        <h3 id="heador">headOr</h3>
+<p>extract the first value from a list</p>
+<ul>
+<li><code>fallback</code> - value to use if list is empty</li>
+<li><code>xs</code> - list to extract from</li>
+<li>returns extracted value or the fallback</li>
+</ul>
+<p>Example:</p>
+<pre><code>headOr(<span class="hljs-number">1</span>, LystOf(<span class="hljs-number">2</span>)) <span class="hljs-comment">// --&gt; 2</span>
+headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// --&gt; 1</span></code></pre>
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> headOr = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">fallback: T</span>) =&gt;</span> (xs: Lyst&lt;T&gt;): <span class="hljs-function"><span class="hljs-params">T</span> =&gt;</span>
+  xs.tag === <span class="hljs-string">"EmptyLyst"</span> ? fallback : xs.val;</pre></div>
+        
+      
+        
+        <h3 id="foldr">foldr</h3>
+<p>Reduce a list from right to left. Similar to <code>Array.prototype.reduceRight</code>.</p>
+<ul>
+<li><code>f</code> Reducing function to apply to the list</li>
+<li><code>acc</code> Initial value for the first application of the reducing function</li>
+<li>returns result of the reduction</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> foldr = &lt;T, U&gt;<span class="hljs-function">(<span class="hljs-params">f: (<span class="hljs-params">acc: U, el: T</span>) =&gt; U</span>) =&gt;</span> (acc: U) =&gt; (
+  xs: Lyst&lt;T&gt;
+): <span class="hljs-function"><span class="hljs-params">U</span> =&gt;</span> (xs.tag === <span class="hljs-string">"EmptyLyst"</span> ? acc : f(foldr(f)(acc)(xs.next), xs.val));</pre></div>
+        
+      
+        
+        <h3 id="foldl">foldl</h3>
+<p>reduce a list from left to right. Similar to <code>Array.prototype.reduce</code></p>
+<ul>
+<li><code>f</code> Reducing function to apply to the list</li>
+<li><code>acc</code> Initial value for the first application of the reducing function</li>
+<li>returns result of the reduction</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> foldl = &lt;T, U&gt;<span class="hljs-function">(<span class="hljs-params">f: (<span class="hljs-params">acc: U, el: T</span>) =&gt; U</span>) =&gt;</span> (acc: U) =&gt; (
+  xs: Lyst&lt;T&gt;
+): <span class="hljs-function"><span class="hljs-params">U</span> =&gt;</span> (xs.tag === <span class="hljs-string">"EmptyLyst"</span> ? acc : foldl(f)(f(acc, xs.val))(xs.next));</pre></div>
+        
+      
+        
+        <h2 id="map">map</h2>
+<p>Apply a transform function to each item in list. Similar to <code>Array.prototype.map</code></p>
+<ul>
+<li><code>f</code> mapping function</li>
+<li><code>xs</code> list to transform</li>
+<li>returns new list with mapped values</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> map = &lt;T, U&gt;<span class="hljs-function">(<span class="hljs-params">f: (<span class="hljs-params">x: T</span>) =&gt; U</span>): (<span class="hljs-params">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt; Lyst&lt;U&gt;</span>) =&gt;</span>
+  foldr&lt;T, Lyst&lt;U&gt;&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">ys, y</span>) =&gt; Lyst(<span class="hljs-params">f(<span class="hljs-params">y</span>), ys</span>)</span>)(<span class="hljs-params">empty</span>);
+
+<span class="hljs-params">const</span> <span class="hljs-params">prependTo</span> = &lt;<span class="hljs-params">T</span>&gt;(<span class="hljs-params">xs: T[], x: T</span>): <span class="hljs-params">T</span>[] =&gt;</span> [x].concat(xs);</pre></div>
+        
+      
+        
+        <h2 id="toarray">toArray</h2>
+<p>convert a list to an array</p>
+<ul>
+<li><code>list</code> to convert to an array.</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> toArray = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">list: Lyst&lt;T&gt;</span>) =&gt;</span> foldr&lt;T, T[]&gt;(prependTo)([])(list);</pre></div>
+        
+      
+        
+        <h2 id="filter">filter</h2>
+<p>Drop values from an array that match a predicate</p>
+<ul>
+<li><code>pred</code> function that tests the values</li>
+<li><code>xs</code> list to filter</li>
+<li>returns new list with the filtered values</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> filter = &lt;T&gt;(
+  pred: <span class="hljs-function">(<span class="hljs-params">x: T</span>) =&gt;</span> <span class="hljs-built_in">boolean</span>
+): <span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt; Lyst&lt;T&gt;</span>) =&gt;</span>
+  foldr&lt;T, Lyst&lt;T&gt;&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">ys, y</span>) =&gt; (<span class="hljs-params">pred(<span class="hljs-params">y</span>) ? Lyst(<span class="hljs-params">y, ys</span>) : ys</span>)</span>)(<span class="hljs-params">empty</span>);
+
+</span></pre></div>
+        
+      
+        
+        <h2 id="findor">findOr</h2>
+<p>Extract the first value from a list that matches a predicate</p>
+<ul>
+<li><code>pred</code> function to test the values</li>
+<li><code>fallback</code> value to use if the expected value is not found</li>
+<li><code>xs</code> list to search</li>
+<li>returns the found result or the fallback if none is found</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> findOr = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">pred: (<span class="hljs-params">x: T</span>) =&gt; <span class="hljs-built_in">boolean</span>, fallback: T</span>) =&gt;</span> (
+  xs: Lyst&lt;T&gt;
+): <span class="hljs-function"><span class="hljs-params">T</span> =&gt;</span>
+  xs.tag === <span class="hljs-string">"EmptyLyst"</span>
+    ? fallback
+    : pred(xs.val)
+      ? xs.val
+      : findOr(pred, fallback)(xs.next);</pre></div>
+        
+      
+        
+        <h2 id="concat">concat</h2>
+<p>concatenate two lists</p>
+<ul>
+<li><code>xs</code> left list</li>
+<li><code>ys</code> right list</li>
+<li>returns concatenated list</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> concat = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt;</span> (ys: Lyst&lt;T&gt;): Lyst&lt;T&gt; =&gt;
+  foldr&lt;T, Lyst&lt;T&gt;&gt;(flip(Lyst))(ys)(xs);
+
+<span class="hljs-keyword">const</span> id = &lt;T&gt;(x: T): <span class="hljs-function"><span class="hljs-params">T</span> =&gt;</span> x;</pre></div>
+        
+      
+        
+        <h2 id="flatten">flatten</h2>
+<p>Flatten a list of lists down a level.</p>
+<ul>
+<li><code>xs</code> list to unnest</li>
+<li>returns flattened list</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> flatten = &lt;T&gt;(xs: Lyst&lt;Lyst&lt;T&gt;&gt;): Lyst&lt;T&gt; =&gt;
+  flatMap&lt;Lyst&lt;T&gt;, T&gt;(id)(xs);</pre></div>
+        
+      
+        
+        <h2 id="flatmap">flatMap</h2>
+<p>Apply a function that returns lists to each item in a list, flatening along the way.</p>
+<ul>
+<li><code>f</code> function that maps items in <code>xs</code> to another list</li>
+<li><code>xs</code> list to remap</li>
+<li>returns unnested list</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> flatMap = &lt;T, U&gt;(
+  f: <span class="hljs-function">(<span class="hljs-params">x: T</span>) =&gt;</span> Lyst&lt;U&gt;
+): <span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt; Lyst&lt;U&gt;</span>) =&gt;</span>
+  foldr&lt;T, Lyst&lt;U&gt;&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">ys, y</span>) =&gt; concat(<span class="hljs-params">f(<span class="hljs-params">y</span>)</span>)(<span class="hljs-params">ys</span>)</span>)(<span class="hljs-params">empty</span>);
+
+</span></pre></div>
+        
+      
+        
+        <h2 id="fromarray">fromArray</h2>
+<p>Convert an array to a list</p>
+<ul>
+<li><code>xs</code> array of values</li>
+<li>returns list of values</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> fromArray = &lt;T&gt;(xs: T[]): Lyst&lt;T&gt; =&gt;
+  xs.reduceRight(<span class="hljs-function">(<span class="hljs-params">acc, x</span>) =&gt;</span> Lyst(x, acc), &lt;Lyst&lt;T&gt;&gt;empty);</pre></div>
+        
+      
+        
+        <h2 id="zipwith">zipWith</h2>
+<p>join two lists into one using passed function. Will terminate when either list is empty.</p>
+<ul>
+<li><code>f</code> binary function to join the values</li>
+<li><code>xs</code> left list</li>
+<li><code>ys</code> right list</li>
+<li>returns new list with the zipped values</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> zipWith = &lt;T, U, V&gt;<span class="hljs-function">(<span class="hljs-params">f: (<span class="hljs-params">x: T, y: U</span>) =&gt; V</span>) =&gt;</span> (xs: Lyst&lt;T&gt;) =&gt; (
+  ys: Lyst&lt;U&gt;
+): Lyst&lt;V&gt; =&gt;
+  xs.tag === <span class="hljs-string">"EmptyLyst"</span> || ys.tag === <span class="hljs-string">"EmptyLyst"</span>
+    ? empty
+    : Lyst(f(xs.val, ys.val), zipWith(f)(xs.next)(ys.next));</pre></div>
+        
+      
+        
+        <h2 id="zip">zip</h2>
+<p>interleave two lists</p>
+<ul>
+<li><code>xs</code> list</li>
+<li><code>ys</code> other list</li>
+<li>returns interleaved list</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> zip = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt;</span> (ys: Lyst&lt;T&gt;): Lyst&lt;T&gt; =&gt;
+  flatten(zipWith&lt;T, T, Lyst&lt;T&gt;&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">x, y</span>) =&gt; Lyst(<span class="hljs-params">x, LystOf(<span class="hljs-params">y</span>)</span>)</span>)(<span class="hljs-params">xs</span>)(<span class="hljs-params">ys</span>));
+
+</span></pre></div>
+        
+      
+        
+        <h2 id="equals">equals</h2>
+<p>compare two lists</p>
+<ul>
+<li><code>xs</code> list</li>
+<li><code>ys</code> other list</li>
+<li>returns false if the the lists don’t contain the same values in the same order</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> equals = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt;</span> (ys: Lyst&lt;T&gt;): <span class="hljs-function"><span class="hljs-params">boolean</span> =&gt;</span> {
+  <span class="hljs-keyword">if</span> (xs.tag === <span class="hljs-string">"EmptyLyst"</span> &amp;&amp; ys.tag === <span class="hljs-string">"EmptyLyst"</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">if</span> (xs.tag === <span class="hljs-string">"EmptyLyst"</span> || ys.tag === <span class="hljs-string">"EmptyLyst"</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">return</span> xs.val === ys.val &amp;&amp; equals(xs.next)(ys.next);
+};</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
