@@ -15,7 +15,7 @@
         
           
           <h1 id="lyst-ts">lyst.ts</h1>
-<p>Type-safe Immutable list for Typescript and JavaScript</p>
+<p>Type-safe immutable list for Typescript and JavaScript</p>
 
           
         
@@ -64,10 +64,10 @@
       
         
         <h3 id="lyst">Lyst</h3>
-<p>Create a list from a value</p>
+<p>Create a lyst from a value</p>
 <ul>
 <li><code>val</code> - value to store in the node</li>
-<li><code>next</code>  - next node in list. To terminate the list pass <code>empty</code></li>
+<li><code>next</code> -  - next node in lyst. To terminate the lyst pass <code>empty</code></li>
 </ul>
 
         
@@ -81,7 +81,7 @@
       
         
         <h3 id="empty">empty</h3>
-<p>The empty list value. Since Lysts are immutable you never have to create a new empty list.
+<p>The empty lyst value. Since Lysts are immutable you never have to create a new empty lyst.
 Use this rather than creating your own.</p>
 
         
@@ -95,7 +95,10 @@ Use this rather than creating your own.</p>
       
         
         <h3 id="isempty">isEmpty</h3>
-<p>Test if a list is empty. All lists contain the empty list as the last element.</p>
+<p>Test if a lyst is empty. All lysts contain the empty lyst as the last element.</p>
+<ul>
+<li><code>xs</code> - lyst to check</li>
+</ul>
 
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> isEmpty = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt;</span> xs === empty;</pre></div>
@@ -103,7 +106,7 @@ Use this rather than creating your own.</p>
       
         
         <h3 id="lystof">LystOf</h3>
-<p>Create a list with a single value</p>
+<p>Create a lyst with a single value</p>
 
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> LystOf = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">x: T</span>) =&gt;</span> Lyst(x, empty);</pre></div>
@@ -118,10 +121,10 @@ Use this rather than creating your own.</p>
       
         
         <h3 id="heador">headOr</h3>
-<p>extract the first value from a list</p>
+<p>extract the first value from a lyst</p>
 <ul>
-<li><code>fallback</code> - value to use if list is empty</li>
-<li><code>xs</code> - list to extract from</li>
+<li><code>fallback</code> - value to use if lyst is empty</li>
+<li><code>xs</code> - lyst to extract from</li>
 <li>returns extracted value or the fallback</li>
 </ul>
 <p>Example:</p>
@@ -134,10 +137,10 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h3 id="foldr">foldr</h3>
-<p>Reduce a list from right to left. Similar to <code>Array.prototype.reduceRight</code>.</p>
+<p>Reduce a lyst from right to left. Similar to <code>Array.prototype.reduceRight</code>.</p>
 <ul>
-<li><code>f</code> Reducing function to apply to the list</li>
-<li><code>acc</code> Initial value for the first application of the reducing function</li>
+<li><code>f</code> - Reducing function to apply to the lyst</li>
+<li><code>acc</code> - Initial value for the first application of the reducing function</li>
 <li>returns result of the reduction</li>
 </ul>
 
@@ -149,10 +152,10 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h3 id="foldl">foldl</h3>
-<p>reduce a list from left to right. Similar to <code>Array.prototype.reduce</code></p>
+<p>reduce a lyst from left to right. Similar to <code>Array.prototype.reduce</code></p>
 <ul>
-<li><code>f</code> Reducing function to apply to the list</li>
-<li><code>acc</code> Initial value for the first application of the reducing function</li>
+<li><code>f</code> - Reducing function to apply to the lyst</li>
+<li><code>acc</code> - Initial value for the first application of the reducing function</li>
 <li>returns result of the reduction</li>
 </ul>
 
@@ -164,11 +167,11 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="map">map</h2>
-<p>Apply a transform function to each item in list. Similar to <code>Array.prototype.map</code></p>
+<p>Apply a transform function to each item in lyst. Similar to <code>Array.prototype.map</code></p>
 <ul>
-<li><code>f</code> mapping function</li>
-<li><code>xs</code> list to transform</li>
-<li>returns new list with mapped values</li>
+<li><code>f</code> - mapping function</li>
+<li><code>xs</code> - lyst to transform</li>
+<li>returns new lyst with mapped values</li>
 </ul>
 
         
@@ -180,22 +183,22 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="toarray">toArray</h2>
-<p>convert a list to an array</p>
+<p>convert a lyst to an array</p>
 <ul>
-<li><code>list</code> to convert to an array.</li>
+<li><code>lyst</code> - to convert to an array.</li>
 </ul>
 
         
-          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> toArray = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">list: Lyst&lt;T&gt;</span>) =&gt;</span> foldr&lt;T, T[]&gt;(prependTo)([])(list);</pre></div>
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> toArray = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">lyst: Lyst&lt;T&gt;</span>) =&gt;</span> foldr&lt;T, T[]&gt;(prependTo)([])(lyst);</pre></div>
         
       
         
         <h2 id="filter">filter</h2>
 <p>Drop values from an array that match a predicate</p>
 <ul>
-<li><code>pred</code> function that tests the values</li>
-<li><code>xs</code> list to filter</li>
-<li>returns new list with the filtered values</li>
+<li><code>pred</code> - function that tests the values</li>
+<li><code>xs</code> - lyst to filter</li>
+<li>returns new lyst with the filtered values</li>
 </ul>
 
         
@@ -209,11 +212,11 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="findor">findOr</h2>
-<p>Extract the first value from a list that matches a predicate</p>
+<p>Extract the first value from a lyst that matches a predicate</p>
 <ul>
-<li><code>pred</code> function to test the values</li>
-<li><code>fallback</code> value to use if the expected value is not found</li>
-<li><code>xs</code> list to search</li>
+<li><code>pred</code> - function to test the values</li>
+<li><code>fallback</code> - value to use if the expected value is not found</li>
+<li><code>xs</code> - lyst to search</li>
 <li>returns the found result or the fallback if none is found</li>
 </ul>
 
@@ -230,11 +233,11 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="concat">concat</h2>
-<p>concatenate two lists</p>
+<p>concatenate two lysts</p>
 <ul>
-<li><code>xs</code> left list</li>
-<li><code>ys</code> right list</li>
-<li>returns concatenated list</li>
+<li><code>xs</code> - left lyst</li>
+<li><code>ys</code> - right lyst</li>
+<li>returns concatenated lyst</li>
 </ul>
 
         
@@ -246,10 +249,10 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="flatten">flatten</h2>
-<p>Flatten a list of lists down a level.</p>
+<p>Flatten a lyst of lysts down a level.</p>
 <ul>
-<li><code>xs</code> list to unnest</li>
-<li>returns flattened list</li>
+<li><code>xs</code> - lyst to unnest</li>
+<li>returns flattened lyst</li>
 </ul>
 
         
@@ -259,11 +262,11 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="flatmap">flatMap</h2>
-<p>Apply a function that returns lists to each item in a list, flatening along the way.</p>
+<p>Apply a function that returns lysts to each item in a lyst, flatening along the way.</p>
 <ul>
-<li><code>f</code> function that maps items in <code>xs</code> to another list</li>
-<li><code>xs</code> list to remap</li>
-<li>returns unnested list</li>
+<li><code>f</code> - function that maps items in <code>xs</code> to another lyst</li>
+<li><code>xs</code> - lyst to remap</li>
+<li>returns unnested lyst</li>
 </ul>
 
         
@@ -277,10 +280,10 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="fromarray">fromArray</h2>
-<p>Convert an array to a list</p>
+<p>Convert an array to a lyst</p>
 <ul>
-<li><code>xs</code> array of values</li>
-<li>returns list of values</li>
+<li><code>xs</code> - array of values</li>
+<li>returns lyst of values</li>
 </ul>
 
         
@@ -290,12 +293,12 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="zipwith">zipWith</h2>
-<p>join two lists into one using passed function. Will terminate when either list is empty.</p>
+<p>join two lysts into one using passed function. Will terminate when either lyst is empty.</p>
 <ul>
-<li><code>f</code> binary function to join the values</li>
-<li><code>xs</code> left list</li>
-<li><code>ys</code> right list</li>
-<li>returns new list with the zipped values</li>
+<li><code>f</code> - binary function to join the values</li>
+<li><code>xs</code> - left lyst</li>
+<li><code>ys</code> - right lyst</li>
+<li>returns new lyst with the zipped values</li>
 </ul>
 
         
@@ -309,11 +312,11 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="zip">zip</h2>
-<p>interleave two lists</p>
+<p>interleave two lysts</p>
 <ul>
-<li><code>xs</code> list</li>
-<li><code>ys</code> other list</li>
-<li>returns interleaved list</li>
+<li><code>xs</code> - lyst</li>
+<li><code>ys</code> - other lyst</li>
+<li>returns interleaved lyst</li>
 </ul>
 
         
@@ -325,11 +328,11 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="equals">equals</h2>
-<p>compare two lists</p>
+<p>compare two lysts</p>
 <ul>
-<li><code>xs</code> list</li>
-<li><code>ys</code> other list</li>
-<li>returns false if the the lists don’t contain the same values in the same order</li>
+<li><code>xs</code> - lyst</li>
+<li><code>ys</code> - other lyst</li>
+<li>returns false if the the lysts don’t contain the same values in the same order</li>
 </ul>
 
         
