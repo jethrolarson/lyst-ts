@@ -14,7 +14,11 @@ import {
   headOr,
   findOr,
   isEmpty,
-  zip
+  zip,
+  range,
+  show,
+  LystOf,
+  join
 } from "./lyst";
 
 const add = (a: number, b: number) => a + b;
@@ -35,6 +39,31 @@ describe("L.ts", () => {
     });
   });
 
+  describe("join", () => {
+    it("turns a lyst into a string", () => {
+      expect(join("$")(fromArray([1, 2, 3]))).toBe("1$2$3");
+    });
+    it("handles empty lyst", () => {
+      expect(join("$")(empty)).toBe("");
+    });
+  });
+
+  describe("show", () => {
+    it("prints a list", () => {
+      expect(show(Lyst(1, LystOf(2)))).toBe("Lyst[1, 2]");
+    });
+    it("prints empty lyst", () => {
+      expect(show(empty)).toBe("Lyst[]");
+    });
+  });
+
+  describe("range", () => {
+    it("Creates list within range", () => {
+      const l = range(2, 10, 2);
+      expect(equals(l)(fromArray([2, 4, 6, 8]))).toBe(true);
+    });
+  });
+
   describe("isEmpty", () => {
     it("true for empty list", () => {
       expect(isEmpty(empty)).toBe(true);
@@ -47,7 +76,6 @@ describe("L.ts", () => {
   describe("foldr", () => {
     it("sums", () => {
       const l = Lyst("5", Lyst("4", Lyst("3", empty)));
-      // 5 + (4 + (3 + 0)) = 12
       expect(foldr(strcat)("")(l)).toBe("345");
     });
   });
@@ -55,7 +83,6 @@ describe("L.ts", () => {
   describe("foldl", () => {
     it("sums", () => {
       const l = Lyst("5", Lyst("4", Lyst("3", empty)));
-      // 3 + (4 + (5 + 0)) = 15
       expect(foldl(strcat)("")(l)).toBe("543");
     });
   });
