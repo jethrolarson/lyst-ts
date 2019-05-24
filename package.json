@@ -50,7 +50,7 @@
     "lint",
     "check"
   ],
-  "version": "4.0.6",
+  "version": "4.1.0",
   "dependencies": {
     "@types/node": "^12.0.1"
   }
