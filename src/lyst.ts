@@ -5,14 +5,14 @@
 // ### EmptyLyst
 // Lyst with no values
 export type EmptyLyst = {
-  readonly kind: "EmptyLyst";
+  readonly kind: 'EmptyLyst';
   readonly length: 0;
 };
 
 // ### NonEmptyLyst
 // Lyst that has at least one value.
 export type NonEmptyLyst<T> = {
-  readonly kind: "Lyst";
+  readonly kind: 'Lyst';
   readonly val: T;
   readonly next: Lyst<T>;
   readonly length: number;
@@ -29,16 +29,16 @@ export type Lyst<T> = NonEmptyLyst<T> | EmptyLyst;
 // * `val` - value to store in the node
 // * `next` -  - next node in lyst. To terminate the lyst pass `empty`
 export const Lyst = <T>(val: T, next: Lyst<T>): NonEmptyLyst<T> => ({
-  kind: "Lyst",
+  kind: 'Lyst',
   val,
   next,
-  length: next.length + 1
+  length: next.length + 1,
 });
 
 // ### empty
 // The empty lyst value. Since Lysts are immutable you never have to create a new empty lyst.
 // Use this rather than creating your own.
-export const empty: EmptyLyst = { kind: "EmptyLyst", length: 0 };
+export const empty: EmptyLyst = {kind: 'EmptyLyst', length: 0};
 
 // ### range
 // Create a list with values between a range
@@ -56,12 +56,10 @@ export const range = (start: number, end: number, step: number): Lyst<number> =>
 // * `xs` - lyst to join
 export const join = (separator: string) => <T>(xs: Lyst<T>) => {
   switch (xs.kind) {
-    case "EmptyLyst":
-      return "";
-    case "Lyst":
-      return foldl<T, string>((str, x) => str + separator + String(x))(
-        String(xs.val)
-      )(xs.next);
+    case 'EmptyLyst':
+      return '';
+    case 'Lyst':
+      return foldl<T, string>((str, x) => str + separator + String(x))(String(xs.val))(xs.next);
   }
 };
 
@@ -69,10 +67,10 @@ export const join = (separator: string) => <T>(xs: Lyst<T>) => {
 // Pretty-print a list
 export const show = <T>(xs: Lyst<T>) => {
   switch (xs.kind) {
-    case "EmptyLyst":
-      return "Lyst[]";
-    case "Lyst":
-      return `Lyst[${join(", ")(xs)}]`;
+    case 'EmptyLyst':
+      return 'Lyst[]';
+    case 'Lyst':
+      return `Lyst[${join(', ')(xs)}]`;
   }
 };
 
@@ -98,26 +96,23 @@ const flip = <T, U, V>(f: (x: T, y: U) => V) => (y2: U, x2: T): V => f(x2, y2);
 //
 //     headOr(1, LystOf(2)) // --> 2
 //     headOr(1, empty) // --> 1
-export const headOr = <T>(fallback: T) => (xs: Lyst<T>): T =>
-  xs.kind === "EmptyLyst" ? fallback : xs.val;
+export const headOr = <T>(fallback: T) => (xs: Lyst<T>): T => (xs.kind === 'EmptyLyst' ? fallback : xs.val);
 
 // ### foldr
 // Reduce a lyst from right to left. Similar to `Array.prototype.reduceRight`.
 // * `f` - Reducing function to apply to the lyst
 // * `acc` - Initial value for the first application of the reducing function
 // * Returns result of the reduction
-export const foldr = <T, U>(f: (acc: U, el: T) => U) => (acc: U) => (
-  xs: Lyst<T>
-): U => (xs.kind === "EmptyLyst" ? acc : f(foldr(f)(acc)(xs.next), xs.val));
+export const foldr = <T, U>(f: (acc: U, el: T) => U) => (acc: U) => (xs: Lyst<T>): U =>
+  xs.kind === 'EmptyLyst' ? acc : f(foldr(f)(acc)(xs.next), xs.val);
 
 // ### foldl
 // Reduce a lyst from left to right. Similar to `Array.prototype.reduce`
 // * `f` - Reducing function to apply to the lyst
 // * `acc` - Initial value for the first application of the reducing function
 // * Returns result of the reduction
-export const foldl = <T, U>(f: (acc: U, el: T) => U) => (acc: U) => (
-  xs: Lyst<T>
-): U => (xs.kind === "EmptyLyst" ? acc : foldl(f)(f(acc, xs.val))(xs.next));
+export const foldl = <T, U>(f: (acc: U, el: T) => U) => (acc: U) => (xs: Lyst<T>): U =>
+  xs.kind === 'EmptyLyst' ? acc : foldl(f)(f(acc, xs.val))(xs.next);
 
 // ## map
 // Apply a transform function to each item in lyst. Similar to `Array.prototype.map`
@@ -139,9 +134,7 @@ export const toArray = <T>(lyst: Lyst<T>) => foldr<T, T[]>(prependTo)([])(lyst);
 // * `pred` - function that tests the values
 // * `xs` - lyst to filter
 // * Returns new lyst with the filtered values
-export const filter = <T>(
-  pred: (x: T) => boolean
-): ((xs: Lyst<T>) => Lyst<T>) =>
+export const filter = <T>(pred: (x: T) => boolean): ((xs: Lyst<T>) => Lyst<T>) =>
   foldr<T, Lyst<T>>((ys, y) => (pred(y) ? Lyst(y, ys) : ys))(empty);
 
 // ## findOr
@@ -150,22 +143,15 @@ export const filter = <T>(
 // * `fallback` - value to use if the expected value is not found
 // * `xs` - lyst to search
 // * Returns the found result or the fallback if none is found
-export const findOr = <T>(pred: (x: T) => boolean, fallback: T) => (
-  xs: Lyst<T>
-): T =>
-  xs.kind === "EmptyLyst"
-    ? fallback
-    : pred(xs.val)
-      ? xs.val
-      : findOr(pred, fallback)(xs.next);
+export const findOr = <T>(pred: (x: T) => boolean, fallback: T) => (xs: Lyst<T>): T =>
+  xs.kind === 'EmptyLyst' ? fallback : pred(xs.val) ? xs.val : findOr(pred, fallback)(xs.next);
 
 // ## concat
 // Concatenate two lysts
 // * `xs` - left lyst
 // * `ys` - right lyst
 // * Returns concatenated lyst
-export const concat = <T>(xs: Lyst<T>) => (ys: Lyst<T>): Lyst<T> =>
-  foldr<T, Lyst<T>>(flip(Lyst))(ys)(xs);
+export const concat = <T>(xs: Lyst<T>) => (ys: Lyst<T>): Lyst<T> => foldr<T, Lyst<T>>(flip(Lyst))(ys)(xs);
 
 const id = <T>(x: T): T => x;
 
@@ -173,25 +159,21 @@ const id = <T>(x: T): T => x;
 // Flatten a lyst of lysts down a level.
 // * `xs` - lyst to unnest
 // * Returns flattened lyst
-export const flatten = <T>(xs: Lyst<Lyst<T>>): Lyst<T> =>
-  flatMap<Lyst<T>, T>(id)(xs);
+export const flatten = <T>(xs: Lyst<Lyst<T>>): Lyst<T> => flatMap<Lyst<T>, T>(id)(xs);
 
 // ## flatMap
 // Apply a function that returns lysts to each item in a lyst, flatening along the way.
 // * `f` - function that maps items in `xs` to another lyst
 // * `xs` - lyst to remap
 // * Returns unnested lyst
-export const flatMap = <T, U>(
-  f: (x: T) => Lyst<U>
-): ((xs: Lyst<T>) => Lyst<U>) =>
+export const flatMap = <T, U>(f: (x: T) => Lyst<U>): ((xs: Lyst<T>) => Lyst<U>) =>
   foldr<T, Lyst<U>>((ys, y) => concat(f(y))(ys))(empty);
 
 // ## fromArray
 // Convert an array to a lyst
 // * `xs` - array of values
 // * Returns lyst of values
-export const fromArray = <T>(xs: T[]): Lyst<T> =>
-  xs.reduceRight((acc, x) => Lyst(x, acc), <Lyst<T>>empty);
+export const fromArray = <T>(xs: T[]): Lyst<T> => xs.reduceRight((acc, x) => Lyst(x, acc), <Lyst<T>>empty);
 
 // ## zipWith
 // Join two lysts into one using passed function. Will terminate when either lyst is empty.
@@ -199,12 +181,8 @@ export const fromArray = <T>(xs: T[]): Lyst<T> =>
 // * `xs` - left lyst
 // * `ys` - right lyst
 // * Returns new lyst with the zipped values
-export const zipWith = <T, U, V>(f: (x: T, y: U) => V) => (xs: Lyst<T>) => (
-  ys: Lyst<U>
-): Lyst<V> =>
-  xs.kind === "EmptyLyst" || ys.kind === "EmptyLyst"
-    ? empty
-    : Lyst(f(xs.val, ys.val), zipWith(f)(xs.next)(ys.next));
+export const zipWith = <T, U, V>(f: (x: T, y: U) => V) => (xs: Lyst<T>) => (ys: Lyst<U>): Lyst<V> =>
+  xs.kind === 'EmptyLyst' || ys.kind === 'EmptyLyst' ? empty : Lyst(f(xs.val, ys.val), zipWith(f)(xs.next)(ys.next));
 
 // ## zip
 // Interleave two lysts
@@ -224,7 +202,7 @@ export const zip = <T>(xs: Lyst<T>) => (ys: Lyst<T>): Lyst<T> =>
 // * `ys` - other lyst
 // * Returns false if the the lysts don't contain the same values in the same order
 export const equals = <T>(xs: Lyst<T>) => (ys: Lyst<T>): boolean => {
-  if (xs.kind === "EmptyLyst" && ys.kind === "EmptyLyst") return true;
-  if (xs.kind === "EmptyLyst" || ys.kind === "EmptyLyst") return false;
+  if (xs.kind === 'EmptyLyst' && ys.kind === 'EmptyLyst') return true;
+  if (xs.kind === 'EmptyLyst' || ys.kind === 'EmptyLyst') return false;
   return xs.val === ys.val && equals(xs.next)(ys.next);
 };

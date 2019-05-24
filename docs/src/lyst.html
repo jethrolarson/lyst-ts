@@ -14,7 +14,7 @@
       <div class="header">
         
           
-          <h1 id="lyst-ts">lyst.ts</h1>
+          <h1 id="lystts">lyst.ts</h1>
 <p>Type-safe immutable list for Typescript and JavaScript</p>
 
           
@@ -31,7 +31,7 @@
 
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> EmptyLyst = {
-  readonly tag: <span class="hljs-string">"EmptyLyst"</span>;
+  readonly kind: <span class="hljs-string">"EmptyLyst"</span>;
   readonly length: <span class="hljs-number">0</span>;
 };</pre></div>
         
@@ -42,7 +42,7 @@
 
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> NonEmptyLyst&lt;T&gt; = {
-  readonly tag: <span class="hljs-string">"Lyst"</span>;
+  readonly kind: <span class="hljs-string">"Lyst"</span>;
   readonly val: T;
   readonly next: Lyst&lt;T&gt;;
   readonly length: <span class="hljs-built_in">number</span>;
@@ -72,7 +72,7 @@
 
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Lyst = &lt;T&gt;(val: T, next: Lyst&lt;T&gt;): NonEmptyLyst&lt;T&gt; =&gt; ({
-  tag: <span class="hljs-string">"Lyst"</span>,
+  kind: <span class="hljs-string">"Lyst"</span>,
   val,
   next,
   length: next.length + <span class="hljs-number">1</span>
@@ -85,12 +85,64 @@
 Use this rather than creating your own.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> empty: EmptyLyst = { tag: <span class="hljs-string">"EmptyLyst"</span>, length: <span class="hljs-number">0</span> };</pre></div>
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> empty: EmptyLyst = { kind: <span class="hljs-string">"EmptyLyst"</span>, length: <span class="hljs-number">0</span> };</pre></div>
+        
+      
+        
+        <h3 id="range">range</h3>
+<p>Create a list with values between a range</p>
+<ul>
+<li><code>start</code> - first number in range</li>
+<li><code>end</code> - where to end the range (exculsive)</li>
+<li><code>step</code> - how much to increment by on each step</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> range = (start: <span class="hljs-built_in">number</span>, end: <span class="hljs-built_in">number</span>, step: <span class="hljs-built_in">number</span>): Lyst&lt;<span class="hljs-built_in">number</span>&gt; =&gt;
+  start &gt;= end ? empty : Lyst(start, range(start + step, end, step));</pre></div>
         
       
         
         <h2 id="functions">Functions</h2>
 
+        
+      
+        
+        <h3 id="join">join</h3>
+<p>Convert Lyst to string using a separator string</p>
+<ul>
+<li><code>separator</code> - string to put between elements</li>
+<li><code>xs</code> - lyst to join</li>
+</ul>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> join = <span class="hljs-function">(<span class="hljs-params">separator: <span class="hljs-built_in">string</span></span>) =&gt;</span> &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt;</span> {
+  <span class="hljs-keyword">switch</span> (xs.kind) {
+    <span class="hljs-keyword">case</span> <span class="hljs-string">"EmptyLyst"</span>:
+      <span class="hljs-keyword">return</span> <span class="hljs-string">""</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-string">"Lyst"</span>:
+      <span class="hljs-keyword">return</span> foldl&lt;T, <span class="hljs-built_in">string</span>&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">str, x</span>) =&gt; str + separator + <span class="hljs-built_in">String</span>(<span class="hljs-params">x</span>)</span>)(<span class="hljs-params">
+        <span class="hljs-built_in">String</span>(<span class="hljs-params">xs.val</span>)
+      </span>)(<span class="hljs-params">xs.next</span>);
+  }
+};
+
+</span></pre></div>
+        
+      
+        
+        <h3 id="show">show</h3>
+<p>Pretty-print a list</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> show = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt;</span> {
+  <span class="hljs-keyword">switch</span> (xs.kind) {
+    <span class="hljs-keyword">case</span> <span class="hljs-string">"EmptyLyst"</span>:
+      <span class="hljs-keyword">return</span> <span class="hljs-string">"Lyst[]"</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-string">"Lyst"</span>:
+      <span class="hljs-keyword">return</span> <span class="hljs-string">`Lyst[<span class="hljs-subst">${join(", ")(xs)}</span>]`</span>;
+  }
+};</pre></div>
         
       
         
@@ -125,14 +177,14 @@ Use this rather than creating your own.</p>
 <ul>
 <li><code>fallback</code> - value to use if lyst is empty</li>
 <li><code>xs</code> - lyst to extract from</li>
-<li>returns extracted value or the fallback</li>
+<li>Returns extracted value or the fallback</li>
 </ul>
 <p>Example:</p>
 <pre><code>headOr(<span class="hljs-number">1</span>, LystOf(<span class="hljs-number">2</span>)) <span class="hljs-comment">// --&gt; 2</span>
 headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// --&gt; 1</span></code></pre>
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> headOr = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">fallback: T</span>) =&gt;</span> (xs: Lyst&lt;T&gt;): <span class="hljs-function"><span class="hljs-params">T</span> =&gt;</span>
-  xs.tag === <span class="hljs-string">"EmptyLyst"</span> ? fallback : xs.val;</pre></div>
+  xs.kind === <span class="hljs-string">"EmptyLyst"</span> ? fallback : xs.val;</pre></div>
         
       
         
@@ -141,28 +193,28 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
 <ul>
 <li><code>f</code> - Reducing function to apply to the lyst</li>
 <li><code>acc</code> - Initial value for the first application of the reducing function</li>
-<li>returns result of the reduction</li>
+<li>Returns result of the reduction</li>
 </ul>
 
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> foldr = &lt;T, U&gt;<span class="hljs-function">(<span class="hljs-params">f: (<span class="hljs-params">acc: U, el: T</span>) =&gt; U</span>) =&gt;</span> (acc: U) =&gt; (
   xs: Lyst&lt;T&gt;
-): <span class="hljs-function"><span class="hljs-params">U</span> =&gt;</span> (xs.tag === <span class="hljs-string">"EmptyLyst"</span> ? acc : f(foldr(f)(acc)(xs.next), xs.val));</pre></div>
+): <span class="hljs-function"><span class="hljs-params">U</span> =&gt;</span> (xs.kind === <span class="hljs-string">"EmptyLyst"</span> ? acc : f(foldr(f)(acc)(xs.next), xs.val));</pre></div>
         
       
         
         <h3 id="foldl">foldl</h3>
-<p>reduce a lyst from left to right. Similar to <code>Array.prototype.reduce</code></p>
+<p>Reduce a lyst from left to right. Similar to <code>Array.prototype.reduce</code></p>
 <ul>
 <li><code>f</code> - Reducing function to apply to the lyst</li>
 <li><code>acc</code> - Initial value for the first application of the reducing function</li>
-<li>returns result of the reduction</li>
+<li>Returns result of the reduction</li>
 </ul>
 
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> foldl = &lt;T, U&gt;<span class="hljs-function">(<span class="hljs-params">f: (<span class="hljs-params">acc: U, el: T</span>) =&gt; U</span>) =&gt;</span> (acc: U) =&gt; (
   xs: Lyst&lt;T&gt;
-): <span class="hljs-function"><span class="hljs-params">U</span> =&gt;</span> (xs.tag === <span class="hljs-string">"EmptyLyst"</span> ? acc : foldl(f)(f(acc, xs.val))(xs.next));</pre></div>
+): <span class="hljs-function"><span class="hljs-params">U</span> =&gt;</span> (xs.kind === <span class="hljs-string">"EmptyLyst"</span> ? acc : foldl(f)(f(acc, xs.val))(xs.next));</pre></div>
         
       
         
@@ -171,7 +223,7 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
 <ul>
 <li><code>f</code> - mapping function</li>
 <li><code>xs</code> - lyst to transform</li>
-<li>returns new lyst with mapped values</li>
+<li>Returns new lyst with mapped values</li>
 </ul>
 
         
@@ -198,7 +250,7 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
 <ul>
 <li><code>pred</code> - function that tests the values</li>
 <li><code>xs</code> - lyst to filter</li>
-<li>returns new lyst with the filtered values</li>
+<li>Returns new lyst with the filtered values</li>
 </ul>
 
         
@@ -217,14 +269,14 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
 <li><code>pred</code> - function to test the values</li>
 <li><code>fallback</code> - value to use if the expected value is not found</li>
 <li><code>xs</code> - lyst to search</li>
-<li>returns the found result or the fallback if none is found</li>
+<li>Returns the found result or the fallback if none is found</li>
 </ul>
 
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> findOr = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">pred: (<span class="hljs-params">x: T</span>) =&gt; <span class="hljs-built_in">boolean</span>, fallback: T</span>) =&gt;</span> (
   xs: Lyst&lt;T&gt;
 ): <span class="hljs-function"><span class="hljs-params">T</span> =&gt;</span>
-  xs.tag === <span class="hljs-string">"EmptyLyst"</span>
+  xs.kind === <span class="hljs-string">"EmptyLyst"</span>
     ? fallback
     : pred(xs.val)
       ? xs.val
@@ -233,11 +285,11 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="concat">concat</h2>
-<p>concatenate two lysts</p>
+<p>Concatenate two lysts</p>
 <ul>
 <li><code>xs</code> - left lyst</li>
 <li><code>ys</code> - right lyst</li>
-<li>returns concatenated lyst</li>
+<li>Returns concatenated lyst</li>
 </ul>
 
         
@@ -252,7 +304,7 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
 <p>Flatten a lyst of lysts down a level.</p>
 <ul>
 <li><code>xs</code> - lyst to unnest</li>
-<li>returns flattened lyst</li>
+<li>Returns flattened lyst</li>
 </ul>
 
         
@@ -266,7 +318,7 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
 <ul>
 <li><code>f</code> - function that maps items in <code>xs</code> to another lyst</li>
 <li><code>xs</code> - lyst to remap</li>
-<li>returns unnested lyst</li>
+<li>Returns unnested lyst</li>
 </ul>
 
         
@@ -283,7 +335,7 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
 <p>Convert an array to a lyst</p>
 <ul>
 <li><code>xs</code> - array of values</li>
-<li>returns lyst of values</li>
+<li>Returns lyst of values</li>
 </ul>
 
         
@@ -293,32 +345,33 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="zipwith">zipWith</h2>
-<p>join two lysts into one using passed function. Will terminate when either lyst is empty.</p>
+<p>Join two lysts into one using passed function. Will terminate when either lyst is empty.</p>
 <ul>
 <li><code>f</code> - binary function to join the values</li>
 <li><code>xs</code> - left lyst</li>
 <li><code>ys</code> - right lyst</li>
-<li>returns new lyst with the zipped values</li>
+<li>Returns new lyst with the zipped values</li>
 </ul>
 
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> zipWith = &lt;T, U, V&gt;<span class="hljs-function">(<span class="hljs-params">f: (<span class="hljs-params">x: T, y: U</span>) =&gt; V</span>) =&gt;</span> (xs: Lyst&lt;T&gt;) =&gt; (
   ys: Lyst&lt;U&gt;
 ): Lyst&lt;V&gt; =&gt;
-  xs.tag === <span class="hljs-string">"EmptyLyst"</span> || ys.tag === <span class="hljs-string">"EmptyLyst"</span>
+  xs.kind === <span class="hljs-string">"EmptyLyst"</span> || ys.kind === <span class="hljs-string">"EmptyLyst"</span>
     ? empty
     : Lyst(f(xs.val, ys.val), zipWith(f)(xs.next)(ys.next));</pre></div>
         
       
         
         <h2 id="zip">zip</h2>
-<p>interleave two lysts</p>
+<p>Interleave two lysts</p>
 <ul>
-<li><code>xs</code> - lyst</li>
+<li><code>xs</code> - first lyst</li>
 <li><code>ys</code> - other lyst</li>
-<li>returns interleaved lyst</li>
+<li>Returns interleaved lyst</li>
 </ul>
-
+<p>Example:</p>
+<pre><code>zip(fromArray([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]))(fromArray([<span class="hljs-number">9</span>, <span class="hljs-number">8</span>, <span class="hljs-number">7</span>])) <span class="hljs-comment">//--&gt; Lyst [1, 9, 2, 8, 3, 7]</span></code></pre>
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> zip = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt;</span> (ys: Lyst&lt;T&gt;): Lyst&lt;T&gt; =&gt;
   flatten(zipWith&lt;T, T, Lyst&lt;T&gt;&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">x, y</span>) =&gt; Lyst(<span class="hljs-params">x, LystOf(<span class="hljs-params">y</span>)</span>)</span>)(<span class="hljs-params">xs</span>)(<span class="hljs-params">ys</span>));
@@ -328,17 +381,17 @@ headOr(<span class="hljs-number">1</span>, empty) <span class="hljs-comment">// 
       
         
         <h2 id="equals">equals</h2>
-<p>compare two lysts</p>
+<p>Compare two lysts</p>
 <ul>
 <li><code>xs</code> - lyst</li>
 <li><code>ys</code> - other lyst</li>
-<li>returns false if the the lysts don’t contain the same values in the same order</li>
+<li>Returns false if the the lysts don’t contain the same values in the same order</li>
 </ul>
 
         
           <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> equals = &lt;T&gt;<span class="hljs-function">(<span class="hljs-params">xs: Lyst&lt;T&gt;</span>) =&gt;</span> (ys: Lyst&lt;T&gt;): <span class="hljs-function"><span class="hljs-params">boolean</span> =&gt;</span> {
-  <span class="hljs-keyword">if</span> (xs.tag === <span class="hljs-string">"EmptyLyst"</span> &amp;&amp; ys.tag === <span class="hljs-string">"EmptyLyst"</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-  <span class="hljs-keyword">if</span> (xs.tag === <span class="hljs-string">"EmptyLyst"</span> || ys.tag === <span class="hljs-string">"EmptyLyst"</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">if</span> (xs.kind === <span class="hljs-string">"EmptyLyst"</span> &amp;&amp; ys.kind === <span class="hljs-string">"EmptyLyst"</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">if</span> (xs.kind === <span class="hljs-string">"EmptyLyst"</span> || ys.kind === <span class="hljs-string">"EmptyLyst"</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
   <span class="hljs-keyword">return</span> xs.val === ys.val &amp;&amp; equals(xs.next)(ys.next);
 };</pre></div>
         

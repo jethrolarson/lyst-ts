@@ -10,7 +10,7 @@
         "skipLibCheck": true,
         "allowSyntheticDefaultImports": true,
         "lib": [
-            "es2018"
+            "es2018",
         ],
     },
     "include": [
