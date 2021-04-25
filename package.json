@@ -63,7 +63,7 @@
     "lint",
     "check"
   ],
-  "version": "5.0.0",
+  "version": "5.0.1",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
