@@ -5,6 +5,7 @@
     "url": "http://www.jethrolarson.com/"
   },
   "description": "Functional Immutable List in TypeScript",
+  "homepage": "http://www.jethrolarson.com/lyst-ts/docs/src/lyst.html",
   "devDependencies": {
     "@commitlint/cli": "^12.1.1",
     "@commitlint/config-conventional": "^12.1.1",
@@ -44,7 +45,7 @@
   "readmeFilename": "README.md",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/jethrolarson/lyst-ts.git"
   },
   "main": "dist/lyst.js",
   "types": "dist/lyst.d.ts",

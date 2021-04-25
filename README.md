@@ -8,7 +8,7 @@ Type-safe Immutable list for Typescript and JavaScript
 
 `npm install lyst-ts`
 
-[DOCS](http://www.jethrolarson.com/lyst/docs/src/lyst.html) (annotated source)
+[DOCS](http://www.jethrolarson.com/lyst-ts/docs/src/lyst.html) (annotated source)
 
 # Why?
 
