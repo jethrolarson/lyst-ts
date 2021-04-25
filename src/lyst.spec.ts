@@ -131,7 +131,7 @@ describe('L.ts', () => {
   describe('filter', () => {
     it('can filter items', () => {
       const l = fromArray([1, 2, 3, 4]);
-      const l2 = filter(a => a > 2)(l);
+      const l2 = filter((a: number) => a > 2)(l);
       const exp = fromArray([3, 4]);
       expect(equals(l2)(exp)).toBe(true);
     });
