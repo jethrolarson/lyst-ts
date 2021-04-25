@@ -40,7 +40,7 @@
     "typescript"
   ],
   "license": "MIT",
-  "name": "lyst",
+  "name": "lyst-ts",
   "readmeFilename": "README.md",
   "repository": {
     "type": "git",
